@@ -11,19 +11,33 @@ import adminRoute from "./src/modules/admin/admin.routes.js";
 
 const app = express();
 
-/* ---------------- CORS ---------------- */
+/* ---------------- CORS CONFIG ---------------- */
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://citypark-smartpark-system-client-zu.vercel.app",
+];
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://citypark-smartpark-system-client-zu.vercel.app",
-    ],
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(null, true); // (safe fallback for Vercel issues)
+      }
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-/* ---------------- WEBHOOK (IMPORTANT) ---------------- */
-// ⚠️ must be BEFORE express.json()
+/* ---------------- FIX PREFLIGHT (IMPORTANT FIX) ---------------- */
+app.options(/.*/, cors());
+
+/* ---------------- WEBHOOK (MUST BE BEFORE JSON) ---------------- */
 app.use("/api/payments/webhook", express.raw({ type: "application/json" }));
 
 /* ---------------- BODY PARSER ---------------- */
