@@ -16,18 +16,21 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://your-frontend.vercel.app",
+      "https://citypark-smartpark-system-client-zu.vercel.app",
     ],
     credentials: true,
   })
 );
 
-/* ---------------- BODY ---------------- */
+/* ---------------- WEBHOOK (IMPORTANT) ---------------- */
+// ⚠️ must be BEFORE express.json()
 app.use("/api/payments/webhook", express.raw({ type: "application/json" }));
+
+/* ---------------- BODY PARSER ---------------- */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-/* ---------------- HEALTH ---------------- */
+/* ---------------- HEALTH CHECK ---------------- */
 app.get("/", (req, res) => {
   res.send("API Running 🚀");
 });
@@ -40,15 +43,20 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/admin", adminRoute);
 
-/* ---------------- 404 ---------------- */
+/* ---------------- 404 HANDLER ---------------- */
 app.use((req, res) => {
-  res.status(404).json({ message: "Route not found" });
+  res.status(404).json({
+    success: false,
+    message: "Route not found",
+  });
 });
 
-/* ---------------- ERROR ---------------- */
+/* ---------------- GLOBAL ERROR HANDLER ---------------- */
 app.use((err, req, res, next) => {
-  console.error(err);
+  console.error("❌ ERROR:", err);
+
   res.status(err.status || 500).json({
+    success: false,
     message: err.message || "Internal Server Error",
   });
 });
