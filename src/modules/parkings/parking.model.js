@@ -4,19 +4,19 @@ const parkingSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
 
     description: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
 
     // Image URL (link)
     image: {
-      required: true,
+      // required: true,
       type: String,
     },
 
