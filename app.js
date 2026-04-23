@@ -19,7 +19,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://citypark-smartpark-system-client.vercel.app/",
+      "https://citypark-smartpark-system-client.vercel.app",
     ],
     credentials: true,
   })
