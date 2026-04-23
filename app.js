@@ -11,25 +11,13 @@ import adminRoute from "./src/modules/admin/admin.routes.js";
 
 const app = express();
 
-/* ---------------- CORS (VERCEL SAFE FIX) ---------------- */
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://citypark-smartpark-system-client-zu.vercel.app",
-];
-
+/* ---------------- CORS (VERCEL SAFE) ---------------- */
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // allow Postman / server-to-server
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      // SAFE fallback (IMPORTANT for Vercel issues)
-      return callback(null, true);
-    },
+    origin: [
+      "http://localhost:5173",
+      "https://citypark-smartpark-system-client-zu.vercel.app",
+    ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -40,10 +28,10 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-/* ---------------- WEBHOOK (MUST BE BEFORE JSON) ---------------- */
+/* ---------------- WEBHOOK (IMPORTANT) ---------------- */
 app.use("/api/payments/webhook", express.raw({ type: "application/json" }));
 
-/* ---------------- HEALTH CHECK ---------------- */
+/* ---------------- HEALTH ---------------- */
 app.get("/", (req, res) => {
   res.send("API Running 🚀");
 });
@@ -56,7 +44,7 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/admin", adminRoute);
 
-/* ---------------- 404 HANDLER ---------------- */
+/* ---------------- 404 ---------------- */
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -64,7 +52,7 @@ app.use((req, res) => {
   });
 });
 
-/* ---------------- GLOBAL ERROR HANDLER ---------------- */
+/* ---------------- ERROR ---------------- */
 app.use((err, req, res, next) => {
   console.error("❌ ERROR:", err);
 
