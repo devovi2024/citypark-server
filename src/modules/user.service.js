@@ -29,6 +29,3 @@ export const updateUser = async (id, data) => {
   }).select("-password");
 };
 
-export const deleteUser = async (id) => {
-  return User.findByIdAndDelete(id);
-};

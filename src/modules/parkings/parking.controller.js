@@ -10,24 +10,40 @@ export const createParkingController = async (req, res) => {
 };
 
 export const getParkings = async (req, res) => {
-  const data = await parkingService.getAllParkings();
-  res.json(data);
+  try {
+    const data = await parkingService.getAllParkings();
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 export const getParking = async (req, res) => {
-  const data = await parkingService.getParkingById(req.params.id);
-  res.json(data);
+  try {
+    const data = await parkingService.getParkingById(req.params.id);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 export const updateParkingController = async (req, res) => {
-  const data = await parkingService.updateParking(
-    req.params.id,
-    req.body
-  );
-  res.json(data);
+  try {
+    const data = await parkingService.updateParking(
+      req.params.id,
+      req.body
+    );
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 export const deleteParkingController = async (req, res) => {
-  await parkingService.deleteParking(req.params.id);
-  res.json({ message: "Parking deleted" });
+  try {
+    await parkingService.deleteParking(req.params.id);
+    res.json({ message: "Parking deleted" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };

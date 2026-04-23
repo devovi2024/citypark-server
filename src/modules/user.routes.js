@@ -4,7 +4,7 @@ import {
   loginUser,
   updateUserController,
   getUser,
-  deleteUserController
+  deleteUserController,
 } from "./user.controller.js";
 
 import { protect } from "../middlewares/auth.middleware.js";
@@ -14,9 +14,6 @@ const router = express.Router();
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 
-
-
-// protected routes
 router.get("/me", protect, getUser);
 router.put("/update", protect, updateUserController);
 router.delete("/delete", protect, deleteUserController);

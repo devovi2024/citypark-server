@@ -2,8 +2,9 @@ import * as userService from "./user.service.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = "your_secret_key";
+const JWT_SECRET = process.env.JWT_SECRET;
 
+/* ---------------- REGISTER ---------------- */
 export const registerUser = async (req, res) => {
   try {
     const user = await userService.createUser(req.body);
@@ -13,6 +14,7 @@ export const registerUser = async (req, res) => {
   }
 };
 
+/* ---------------- LOGIN ---------------- */
 export const loginUser = async (req, res) => {
   try {
     const user = await userService.findUserByEmail(req.body.email);
@@ -21,17 +23,17 @@ export const loginUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const isMatch = await bcrypt.compare(req.body.password, user.password);
+    const isMatch = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
 
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
     const token = jwt.sign(
-      {
-        id: user._id,
-        role: user.role,
-      },
+      { id: user._id, role: user.role },
       JWT_SECRET,
       { expiresIn: "7d" }
     );
@@ -49,6 +51,7 @@ export const loginUser = async (req, res) => {
   }
 };
 
+/* ---------------- GET USER ---------------- */
 export const getUser = async (req, res) => {
   try {
     const user = await userService.getUserById(req.user.id);
@@ -58,6 +61,7 @@ export const getUser = async (req, res) => {
   }
 };
 
+/* ---------------- UPDATE USER ---------------- */
 export const updateUserController = async (req, res) => {
   try {
     const updatedUser = await userService.updateUser(
@@ -71,6 +75,7 @@ export const updateUserController = async (req, res) => {
   }
 };
 
+/* ---------------- DELETE USER ---------------- */
 export const deleteUserController = async (req, res) => {
   try {
     await userService.deleteUser(req.user.id);
