@@ -1,8 +1,7 @@
 import User from "../modules/user.model.js";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = "your_secret_key";
-
+const JWT_SECRET = process.env.JWT_SECRET;
 export const protect = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
