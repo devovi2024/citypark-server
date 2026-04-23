@@ -11,7 +11,7 @@ import adminRoute from "./src/modules/admin/admin.routes.js";
 
 const app = express();
 
-/* ---------------- CORS CONFIG ---------------- */
+/* ---------------- CORS (VERCEL SAFE FIX) ---------------- */
 const allowedOrigins = [
   "http://localhost:5173",
   "https://citypark-smartpark-system-client-zu.vercel.app",
@@ -20,13 +20,15 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: function (origin, callback) {
+      // allow Postman / server-to-server
       if (!origin) return callback(null, true);
 
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
-      } else {
-        return callback(null, true); // (safe fallback for Vercel issues)
       }
+
+      // SAFE fallback (IMPORTANT for Vercel issues)
+      return callback(null, true);
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
@@ -34,15 +36,12 @@ app.use(
   })
 );
 
-/* ---------------- FIX PREFLIGHT (IMPORTANT FIX) ---------------- */
-app.options(/.*/, cors());
-
-/* ---------------- WEBHOOK (MUST BE BEFORE JSON) ---------------- */
-app.use("/api/payments/webhook", express.raw({ type: "application/json" }));
-
 /* ---------------- BODY PARSER ---------------- */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+/* ---------------- WEBHOOK (MUST BE BEFORE JSON) ---------------- */
+app.use("/api/payments/webhook", express.raw({ type: "application/json" }));
 
 /* ---------------- HEALTH CHECK ---------------- */
 app.get("/", (req, res) => {
